@@ -159,7 +159,12 @@ void setup() {
    Serial.begin(9600);
   randomSeed(analogRead(0)); //consider another analog pin, or moving to the regular void loop.
     pinMode(BUTTON_PIN, INPUT_PULLUP); // Configure the button pin as input with pull-up resistor
+    
+  if(EEPROM.read(0)==255){ // when first uploading program, eeprom is empty (or 255)
+    mode=1;           //so we need to check that and write a default state
+  } else {
   mode = EEPROM.read(0);
+  }
 }
 
 /*WEIGHTED RANDOM FUNCTION

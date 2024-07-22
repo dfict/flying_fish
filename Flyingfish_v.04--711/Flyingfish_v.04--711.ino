@@ -1,10 +1,10 @@
-   // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
+     // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
 // DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
 //
 
 #include <EEPROM.h>
 
-#define SAMPLE_RATE 22050 // adjust sample rate to lower pitch, 11025 for octave lower for example
+#define SAMPLE_RATE 22050 // adjust sample rate to lower pitch, 11025 for octave lower for example, 22050 normal
 #define SIZE        256
 #define OFFSET      32
 #define LED_PIN     13
@@ -176,7 +176,7 @@ int weightedRandom(int* weights, int width) {
     totalWeight += weights[i];
   }
   
-  int randomValue = random(totalWeight);
+  int randomValue = random(totalWeight); // is this truly random?
   int cumulativeWeight = 0;
   for (int i = 0; i < width; i++) {
     cumulativeWeight += weights[i];
@@ -200,9 +200,9 @@ void FlyingFish_tonic() {
     trig = true;              // True at the trigger fires a Karplus grain.
 
     // Note Choice
-    int tab = weightedRandom(weights, 16); // Critical note choice line of code.
-    int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
-    pulse = thermal;
+    int tab = weightedRandom(weights, 24); // Critical note choice line of code.
+  //  int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+   // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
     bound = noteTable[tab]; // No thermal variation on the pitch.
@@ -244,9 +244,9 @@ void FlyingFish_octaveup() {
     trig = true;              // True at the trigger fires a Karplus grain.
 
     // Note Choice
-    int tab = weightedRandom(weights, 16); // Critical note choice line of code.
-    int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
-    pulse = thermal;
+    int tab = weightedRandom(weights, 24); // Critical note choice line of code.
+ //   int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+   // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
     bound = noteTable[tab]; // No thermal variation on the pitch.
@@ -285,13 +285,13 @@ void FlyingFish_emphasize7() {
       j = -1;     // Switch direction at the peak.
     }
 
-    LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
+//    LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
     trig = true;              // True at the trigger fires a Karplus grain.
 
     // Note Choice
-    int tab = weightedRandom(weights, 16); // Critical note choice line of code.
-    int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
-    pulse = thermal;
+    int tab = weightedRandom(weights, 24); // Critical note choice line of code. ----should it be 24? was 16
+   // int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+   // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
     bound = noteTable[tab]; // No thermal variation on the pitch.
@@ -330,13 +330,13 @@ void FlyingFish_random() {
       j = -1;     // Switch direction at the peak.
     }
 
-    LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
+  //  LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
     trig = true;              // True at the trigger fires a Karplus grain.
 
     // Note Choice
-    int tab = weightedRandom(weights, 16); // Critical note choice line of code.
-    int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
-    pulse = thermal;
+    int tab = weightedRandom(weights, 24); // Critical note choice line of code.
+   // int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+  //  pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
     bound = noteTable[tab]; // No thermal variation on the pitch.

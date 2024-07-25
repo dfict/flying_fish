@@ -21,3 +21,10 @@ A few notes that will be incorporated in the next revision:
 4) the potentiometer silkscreen is on the bottom of the board. a mistake! you can short out two of the pins if you don't want to use a volume knob. (the two next to the 10k resistor on the topside). Or you can use a panel mount pot. or use one of the two included on the bom, topside.
 5) for the solar Panel: 9v, 300ma works great. You can scoop them anywhere.
 6) box design files coming soon!
+
+FAQ:
+Q: How to program?
+A: Use an ISP programmer.
+Q: I don't have an ISP Programmer—what do I do?
+A: <a href="https://www.electroschematics.com/icsp-custom-cables-and-arduino/">Here is a guide to modifying an Arduino Uno to be an ISP programmer.</a> Get a little cable off amazon and snip out pin 5, and route that to the Arduno pin 10. Or use standalone jumpers such as described <a href="https://www.instructables.com/Arduino-ICSP-Programming-Cable/">here</a>.
+Q: How do I use the serial monitor to 

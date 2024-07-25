@@ -1,4 +1,4 @@
-     // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
+// Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
 // DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
 //
 
@@ -22,13 +22,18 @@ uint8_t bound = SIZE; //bound is the period of the delayline. it's important for
 int accum = 0;
 int lowpass = 0.1; // 0 ... 1.0
 bool trig = false;
-int thermistor = analogRead(0); // define where the temperature sensor is
-int solarpanel = analogRead(1);   /* define where the wobbly voltage is. 
+int tempSensor = analogRead(0); /* define where the temperature sensor is. 
+                                  Use 3 pin TMP36GT9Z from analog devices! easy.*/
+int solarPanel = analogRead(1);   /* define where the wobbly voltage is. 
                                 this is just a voltage divider hooked up to the solar panel, 
                                 should vary from 5v to 0v depending on sun conditions. 
                                  can be used later.*/
+int foilAntennae = analogRead(2); /* define where the foil antennae sensor is. 
+                                  experimental variable. maybe you can make a foil antennae 
+                                  easily inside the case?*/
 
 int mode = 1; // Variable to track the current program mode
+int val[6];
 
 // note root -- needs to be under the size of the delayline window, can't be less than 256.  
 float pulse = 255.0;
@@ -65,7 +70,6 @@ float noteTable[24] = {
   note1, note2, note3, note4, note5, note6, note7, note8, note9, note10, note11, note12, 
   note13, note14, note15, note16, note17, note18, note19, note20, note21, note22, note23, note24 
 };
-
 
 
 
@@ -201,7 +205,7 @@ void FlyingFish_tonic() {
 
     // Note Choice
     int tab = weightedRandom(weights, 24); // Critical note choice line of code.
-  //  int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+  //  int thermal = map(tempSensor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
    // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
@@ -209,7 +213,7 @@ void FlyingFish_tonic() {
     bound = bound / 1; //choose where to put the tonic.
 
     // LOPASS FILTERING
-    // int value = solarpanel; // Set up an analog input. Use sensor 5 for the thermistor!
+    // int value = solarPanel; // Set up an analog input. Use sensor 5 for the tempSensor!
     int value = random(0, 1023); // Put a random articulator variable onto the lopass input.
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0; // Shift the value to between 0.0 and 3.0.
     lowpass = falue; // Route that value to the lopass variable.
@@ -221,14 +225,22 @@ void FlyingFish_tonic() {
     bond = bond + vari;
     bond = bond / 5;
     delay(bond);
+        for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
+        {
+        val[q]=analogRead(q);       //commment this out if you need to!
+        Serial.print(val[q]);
+        Serial.print(" ");
+        }
+    Serial.println(); //need to carriage return of course
+    
  // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println("Button pressed. Exiting Flying1()");
+      Serial.println("Button pressed. Exiting FlyingFish_tonic();");
       break;
     }
     
   }
-  Serial.println("Executing Flying2()"); 
+  Serial.println("Executing FlyingFish_tonic();"); 
 }
 
 void FlyingFish_octaveup() {
@@ -245,7 +257,7 @@ void FlyingFish_octaveup() {
 
     // Note Choice
     int tab = weightedRandom(weights, 24); // Critical note choice line of code.
- //   int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+ //   int thermal = map(tempSensor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
    // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
@@ -253,7 +265,7 @@ void FlyingFish_octaveup() {
     bound = bound / 4; // 2 octaves up!
 
     // LOPASS FILTERING
-    // int value = solarpanel; // Set up an analog input. Use sensor 5 for the thermistor!
+    // int value = solarPanel; // Set up an analog input. Or use sensor 2 for the temperature!
     int value = random(0, 1023); // Put a random articulator variable onto the lopass input.
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0; // Shift the value to between 0.0 and 3.0.
     lowpass = falue; // Route that value to the lopass variable.
@@ -265,14 +277,21 @@ void FlyingFish_octaveup() {
     bond = bond + vari;
     bond = bond / 6;
     delay(bond);
-
+    
+    for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
+        {
+        val[q]=analogRead(q);       //commment this out if you need to!
+        Serial.print(val[q]);
+        Serial.print(" ");
+        }
+    Serial.println(); //need to carriage return of course
      // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println("Button pressed. Exiting Flying1()");
+      Serial.println("Button pressed. Exiting FlyingFish_octaveup()");
       break;
     }
   }
-  Serial.println("Executing Flying2()"); 
+  Serial.println("Executing FlyingFish_octaveup()"); 
 }
 
 void FlyingFish_emphasize7() {
@@ -290,7 +309,7 @@ void FlyingFish_emphasize7() {
 
     // Note Choice
     int tab = weightedRandom(weights, 24); // Critical note choice line of code. ----should it be 24? was 16
-   // int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+   // int thermal = map(tempSensor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
    // pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
@@ -298,7 +317,7 @@ void FlyingFish_emphasize7() {
     bound = bound / 2;
 
     // LOPASS FILTERING
-    // int value = solarpanel; // Set up an analog input. Use sensor 5 for the thermistor!
+    // int value = solarPanel; // Set up an analog input. Use sensor 5 for the tempSensor!
     int value = random(0, 1023); // Put a random articulator variable onto the lopass input.
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0; // Shift the value to between 0.0 and 3.0.
     lowpass = falue; // Route that value to the lopass variable.
@@ -310,14 +329,23 @@ void FlyingFish_emphasize7() {
     bond = bond + vari;
     bond = bond / 3;
     delay(bond);
+
+    for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
+        {
+        val[q]=analogRead(q);       //commment this out if you need to!
+        Serial.print(val[q]);
+        Serial.print(" ");
+        }
+    Serial.println(); //need to carriage return of course
+    
  // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println("Button pressed. Exiting Flying1()");
+      Serial.println("Button pressed. Exiting FlyingFish_emphasize7()");
       break;
     }
     
   }
-  Serial.println("Executing Flying3()");
+  Serial.println("Executing FlyingFish_emphasize7()");
 }
 
 void FlyingFish_random() {
@@ -335,7 +363,7 @@ void FlyingFish_random() {
 
     // Note Choice
     int tab = weightedRandom(weights, 24); // Critical note choice line of code.
-   // int thermal = map(thermistor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
+   // int thermal = map(tempSensor, 0, 1023, 1, 15); // Attenuate the thermal variation — use analogRead(0).
   //  pulse = thermal;
 
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
@@ -343,7 +371,7 @@ void FlyingFish_random() {
     bound = bound / 1; //choose where to put the tonic.
 
     // LOPASS FILTERING
-    // int value = solarpanel; // Set up an analog input. Use sensor 5 for the thermistor!
+    // int value = solarPanel; // Set up an analog input. Use sensor 5 for the tempSensor!
     int value = random(0, 1023); // Put a random articulator variable onto the lopass input.
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0; // Shift the value to between 0.0 and 3.0.
     lowpass = falue; // Route that value to the lopass variable.
@@ -355,13 +383,22 @@ void FlyingFish_random() {
     bond = bond + vari;
     bond = bond / 5;
     delay(bond);
+
+    for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
+        {
+        val[q]=analogRead(q);       //commment this out if you need to!
+        Serial.print(val[q]);
+        Serial.print(" ");
+        }
+    Serial.println(); //need to carriage return of course
+    
  // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println("Button pressed. Exiting Flying1()");
+      Serial.println("Button pressed. Exiting FlyingFish_random()");
       break;
     }  
   }
-  Serial.println("Executing Flying4()");
+  Serial.println("Executing FlyingFish_random()");
 }
 
 

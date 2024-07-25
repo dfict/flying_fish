@@ -27,4 +27,5 @@ Q: How to program?
 A: Use an ISP programmer.
 Q: I don't have an ISP Programmer—what do I do?
 A: <a href="https://www.electroschematics.com/icsp-custom-cables-and-arduino/">Here is a guide to modifying an Arduino Uno to be an ISP programmer.</a> Get a little cable off amazon and snip out pin 5, and route that to the Arduno pin 10. Or use standalone jumpers such as described <a href="https://www.instructables.com/Arduino-ICSP-Programming-Cable/">here</a>.
-Q: How do I use the serial monitor to 
+Q: How do I use the serial monitor to monitor data flow?
+A: Flying Fish is a low power board optimized for efficiency off a 9v solar panel so we avoid as many peripherals as possible. I've had luck using FTDI cable. LIKE THIS: <a href="https://www.adafruit.com/product/70">This cable lets you connect to the serial monitor but is not very useful for uploading new code.</a>

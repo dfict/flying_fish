@@ -196,11 +196,16 @@ int weightedRandom(int* weights, int width) {
   return width - 1;
 }
 
-void FlyingFish(int* weights, float* noteTable, float boundDivisor) {
+//weights array referencing the likelihood of a note in the 24 note scale 
+// noteTable is the scale
+// phrase end is the width of the forloop (rhythm phrasing)
+//divisor is the lowest note of the scale. divide by 2 or 4 to change the octave, etc.
+
+void FlyingFish(int* weights, float* noteTable, int phraseEnd, float divisor) {
   int j = 1;
   for (int i = 0; i > -1; i = i + j) {
                    // Wraps entire rhythm structure in this loop.
-    if (i == 30) { // Catch the edge of the timer! this number 30 could be resized.
+    if (i == phraseEnd) { // Catch the edge of the timer! this number 30 could be resized.
       j = -1;     // Switch direction at the peak.
     }
 
@@ -213,7 +218,7 @@ void FlyingFish(int* weights, float* noteTable, float boundDivisor) {
     
     // Bound = noteTable[tab] + thermal; // Put a little thermal variation on the pitch.
     bound = noteTable[tab]; // No thermal variation on the pitch.
-    bound = bound / boundDivisor; //choose where to put the tonic.
+    bound = bound / divisor; //choose where to put the tonic.
 
     // LOPASS FILTERING
     int value = random(0, 1023); // Put a random articulator variable onto the lopass input.
@@ -259,16 +264,16 @@ void loop() {
   // Call the appropriate program based on the mode
   switch (mode) {
     case 1:
-     FlyingFish(weights1, noteTable, 1);
+     FlyingFish(weights1, noteTable, 30, 1);
      break;
     case 2:
-     FlyingFish(weights1, noteTable, 4);
+     FlyingFish(weights1, noteTable, 30, 4);
      break;
      case 3:
-     FlyingFish(weights2, noteTable, 1);
+     FlyingFish(weights2, noteTable, 20, 2);
      break;
      case 4:
-     FlyingFish(randomweights, noteTable, 2); 
+     FlyingFish(randomweights, noteTable, 7, 0.5); 
      default:
       // Optional: handle unexpected values or do nothing
       break;  

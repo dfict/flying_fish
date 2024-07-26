@@ -65,11 +65,11 @@ float note22 = pulse / (441.0/128.0);
 float note23 = pulse / (7.0/2.0);
 float note24 = pulse / (63.0/16.0);
 
-
 float noteTable[24] = {
   note1, note2, note3, note4, note5, note6, note7, note8, note9, note10, note11, note12, 
   note13, note14, note15, note16, note17, note18, note19, note20, note21, note22, note23, note24 
 };
+
 
 
 
@@ -225,14 +225,14 @@ void FlyingFish_tonic() {
     bond = bond + vari;
     bond = bond / 5;
     delay(bond);
-        for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
+       for(int q = 0; q < 3; q++)  //this loop prints the three analog voltages in 10 bit binary to the Serial 
         {
         val[q]=analogRead(q);       //commment this out if you need to!
         Serial.print(val[q]);
         Serial.print(" ");
         }
     Serial.println(); //need to carriage return of course
-    
+   
  // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
       Serial.println("Button pressed. Exiting FlyingFish_tonic();");

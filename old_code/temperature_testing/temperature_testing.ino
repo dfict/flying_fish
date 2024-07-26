@@ -23,7 +23,9 @@ void loop() {
 //  Serial.print(" degrees Celsius | ");
   Serial.print(temperatureFahrenheit);
   Serial.println(" degrees Fahrenheit");
-
+  Serial.print("Raw Value from Sensor: ");
+  Serial.println(sensorValue);
+  
   // Categorize temperature into different ranges
   int temperatureCategory = -1;  // Default category for out-of-range values
 

@@ -23,7 +23,11 @@ int accum = 0;
 int lowpass = 0.1; // 0 ... 1.0
 bool trig = false;
 int tempSensor = analogRead(0); /* define where the temperature sensor is. 
-                                  Use 3 pin TMP36GT9Z from analog devices! easy.*/
+                                  Use 3 pin TMP36GT9Z from analog devices! easy.
+                                  Note that for 105F° the ADC is approx 185.
+                                  and for 15° the ADC is approx 83
+                                  roughly one degree F per bit but not exactly.
+                                                                            */
 int solarPanel = analogRead(1);   /* define where the wobbly voltage is. 
                                 this is just a voltage divider hooked up to the solar panel, 
                                 should vary from 5v to 0v depending on sun conditions. 

@@ -1,6 +1,6 @@
 // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
 // DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
-//
+// thanks Lee Tusman and Fame Tothong and Keng for joining the initial crew of beta testers.
 
 #include <EEPROM.h>
 
@@ -170,10 +170,10 @@ void stopPlayback()
 void setup() {
   startPlayback();
    Serial.begin(9600);
-  randomSeed(analogRead(0)); //consider another analog pin, or moving to the regular void loop.
+  randomSeed(analogRead(0));       //consider another analog pin, or moving to the regular void loop.
     pinMode(BUTTON_PIN, INPUT_PULLUP); // Configure the button pin as input with pull-up resistor
     
-  if(EEPROM.read(0)==255){ // when first uploading program, eeprom is empty (or 255)
+  if(EEPROM.read(0)==255){ // when first uploading program, eeprom is empty (aka, 255)
     mode=1;           //so we need to check that and write a default state
   } else {
   mode = EEPROM.read(0);
@@ -205,13 +205,15 @@ int weightedRandom(int* weights, int width) {
 // phrase end is the width of the forloop (rhythm phrasing)
 //divisor is the lowest note of the scale. divide by 2 or 4 to change the octave, etc.
 
-void FlyingFish(int* weights, float* noteTable, int phraseEnd, float divisor) {
+void FlyingFish(int* weights, float* noteTable, int phraseEnd, float divisor) //need to add value for the start value
+{
   int j = 1;
-  for (int i = 0; i > -1; i = i + j) {
-                   // Wraps entire rhythm structure in this loop.
-    if (i == phraseEnd) { // Catch the edge of the timer! this number 30 could be resized.
-      j = -1;     // Switch direction at the peak.
-    }
+  for (int i = 0; i > -1; i = i + j)  // Wraps entire rhythm structure in this loop.
+  {  
+    if (i == phraseEnd) 
+          { // Catch the edge of the timer! this number 30 could be resized.
+          j = -1;     // Switch direction at the peak.
+          }
 
     LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
     trig = true;              // True at the trigger fires a Karplus grain.

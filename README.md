@@ -30,7 +30,7 @@ A: Flying Fish is a low power board optimized for efficiency off a 9v solar pane
 
 A few notes that will be incorporated in the next revision:
 1) the PCB itself calls for an LM7805, but I prefer using a low drop out regulator, LF50ABV for example, so I've included that in the BOM. The pinout is the same, but make sure you use the right capacitors for that one—.1uf on input, 2.2uf on output. Different from the board text!
-2) the NJM2073 is obsolete. You can use the TDA2822D instead, but that is surface mount, so you can use a surfboard for that, or just scoop the 2073 on ebay. Some stores in Akihabara, Japan still carry the NJM2073 for 30 yen a piece!
+2) the NJM2073 is obsolete. You can use the TDA2822D instead, but that is surface mount, so you can use a surfboard for that, or just scoop the 2073 on ebay. Maybe <a href="https://www.futurlec.com/Sanyo/NJM2073Dpr.shtml">Futurlec</a>. Some stores in Akihabara, Japan still carry the NJM2073 for 30 yen a piece!
 3) for programming the chip, you can use an ISP programmer, or even use an Arduino as ISP. I'm going to update this later with a guide for that.
 4) the potentiometer silkscreen is on the bottom of the board. a mistake! you can short out two of the pins if you don't want to use a volume knob. (the two next to the 10k resistor on the topside). Or you can use a panel mount pot. or use one of the two included on the bom, topside.
 5) for the solar Panel: 9v, 300ma works great. You can scoop them anywhere.

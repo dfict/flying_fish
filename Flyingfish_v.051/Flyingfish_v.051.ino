@@ -1,4 +1,4 @@
-// Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
+  // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
 // DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
 // thanks Lee Tusman and Fame Tothong and Keng for joining the initial crew of beta testers.
 
@@ -31,7 +31,8 @@ int tempSensor = analogRead(0); /* define where the temperature sensor is.
 int solarPanel = analogRead(1);   /* define where the wobbly voltage is. 
                                 this is just a voltage divider hooked up to the solar panel, 
                                 should vary from 5v to 0v depending on sun conditions. 
-                                 can be used later.*/
+                                 can be used later.
+                                 value reliably ferret between 600 and 900 with 100k and 81k resistor*/
 int foilAntennae = analogRead(2); /* define where the foil antennae sensor is. 
                                   experimental variable. maybe you can make a foil antennae 
                                   easily inside the case?*/
@@ -170,7 +171,7 @@ void stopPlayback()
 void setup() {
   startPlayback();
    Serial.begin(9600);
-  randomSeed(analogRead(0));       //consider another analog pin, or moving to the regular void loop.
+  randomSeed(analogRead(4));       //was 0. trying another analog pin. move to the regular void loop?
     pinMode(BUTTON_PIN, INPUT_PULLUP); // Configure the button pin as input with pull-up resistor
     
   if(EEPROM.read(0)==255){ // when first uploading program, eeprom is empty (aka, 255)
@@ -205,7 +206,7 @@ int weightedRandom(int* weights, int width) {
 // phrase end is the width of the forloop (rhythm phrasing)
 //divisor is the lowest note of the scale. divide by 2 or 4 to change the octave, etc.
 
-void FlyingFish(int* weights, float* noteTable, int phraseBegin, int phraseEnd, float divisor) //need to add value for the start value
+void FlyingFlounder(int* weights, float* noteTable, int phraseBegin, int phraseEnd, float divisor) //need to add value for the start value
 {
   int j = 1;
   int phraseStop = phraseBegin - 1;
@@ -215,6 +216,12 @@ void FlyingFish(int* weights, float* noteTable, int phraseBegin, int phraseEnd, 
           { // Catch the edge of the timer! this number 30 could be resized.
           j = -1;     // Switch direction at the peak.
           }
+
+    // Constrain the analog sensors.
+    tempSensor = constrain(tempSensor, 83, 185); // Constrain the value between 15° and 105° F
+    int mappedTemp = map(tempSensor, 83, 185, 200, 400); // Map to the target range. decide variables
+    solarPanel = constrain(solarPanel, 630, 950); // Constrain the value between 15° and 105° F
+    int mappedSolar = map(solarPanel, 630, 950, 200, 400); // Map to the target range. decide variables
 
     LED_PORT ^= 1 << LED_BIT; // Toggles an LED for debug purposes.
     trig = true;              // True at the trigger fires a Karplus grain.
@@ -248,11 +255,11 @@ void FlyingFish(int* weights, float* noteTable, int phraseBegin, int phraseEnd, 
     
     // Check for button press and exit loop if pressed
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println(F("Button pressed. Exiting FlyingFish();"));
+      Serial.println(F("Button pressed. Exiting FlyingFlounder();"));
       break;
     }
   }
-  Serial.println(F("Executing FlyingFish();")); 
+  Serial.println(F("Executing FlyingFlounder();")); 
 }
 
 
@@ -265,25 +272,25 @@ void loop() {
     Serial.println(mode);
        // Write the current mode to EEPROM
     EEPROM.write(0, mode);
-    delay(500); // Debounce delay
+    delay(100); // Debounce delay
   }
 
   // Call the appropriate program based on the mode
   switch (mode) {
     case 1:
-     FlyingFish(weights1, noteTable, 0, 30, 1); //weighted random, scale, beginning count and end count, divisor of note
+     FlyingFlounder(weights1, noteTable, 0, 30, 1); //weighted random, scale, beginning count and end count, divisor of note
      break;
     case 2:
-     FlyingFish(weights1, noteTable, 0, 30, 4);
+     FlyingFlounder(weights1, noteTable, 0, 30, 4);
      break;
      case 3:
-     FlyingFish(weights2, noteTable, 10, 20, 2);
+     FlyingFlounder(weights2, noteTable, 10, 20, 2);
      break;
      case 4:
-     FlyingFish(randomweights, noteTable, 0, 7, 0.5); 
+     FlyingFlounder(randomweights, noteTable, 0, 7, 0.5); 
      default:
       // Optional: handle unexpected values or do nothing
-      break;  
+     break;  
       
   }
 

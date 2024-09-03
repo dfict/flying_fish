@@ -21,6 +21,7 @@ uint8_t delaymem[SIZE];
 uint8_t locat = 0;
 uint8_t bound = SIZE; //bound is the period of the delayline. 
                       //it's important for pitch and timing routines later.
+
 int accum = 0;
 int lowpass = 0.1; // 0 ... 1.0
 bool trig = false;
@@ -382,17 +383,18 @@ void FlyingFlounder(int* weights, float* noteTable, int phraseBegin, int phraseE
   Serial.println(F("Executing FlyingFlounder();")); 
 }
 
-void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float divisor, float mult, float add) {
+void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float divisor, float mult, float add) 
+{
   int j = 1;
   int phraseStop = phraseBegin - 1;
-  for (int i = phraseBegin; i > phraseStop; i = i + j) {
-    if (i == phraseEnd) {
+  for (int i = phraseBegin; i > phraseStop; i = i + j) 
+  {
+    if (i == phraseEnd) 
+    {
       j = -1;
     }
 
     updateSensorReadings();
-   
-    
     LED_PORT ^= 1 << LED_BIT;
     trig = true;
   
@@ -400,23 +402,19 @@ void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float diviso
     float noiseValue = (perlinNoise((i * (mult + 0.0) ) + floatPot) + 1.0) / 2.0;
 // i * (mult + floatPot) + add?
  //or  i * (mult ) + floatPot?
-   
           // float noiseValue = (perlinNoise(i * 0.4) + 1.0) / 2.0; 
           // i / 20.0 still works but changes are so gradual...2.5 is good
           // i * 3.4 is ok... i * 2.0 also ok
           // add is usually just 1. maybe get rid of + add + 1?
-      
     noiseValue = constrain(noiseValue, 0.0, 1.0);
     int tab = (int)(noiseValue * 23.0);  // Scale noise to select note from noteTable
     tab = constrain(tab, 0, 23);  // Ensure tab is within bounds...might not be needed
-
     bound = noteTable[tab];
     bound = bound / divisor;
     //bound = constrain(bound, 24, 255); 
     int value = random(0, 1023);
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0;
     lowpass = falue;
-
     int bond = bound * i;
     int vari = i * 3;
     bond = bond + vari;
@@ -426,8 +424,12 @@ void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float diviso
     for(int q = 0; q < 3; q++) {
       val[q] = analogRead(q);
       Serial.print(val[q]);
-      Serial.print(" ");
+      Serial.print(F(" "));
     }
+    Serial.print(noteTable[tab]);
+    Serial.print(F(" "));
+    Serial.print(tab);
+    Serial.print(F(" "));
     Serial.println(floatPot);
 
     if (digitalRead(BUTTON_PIN) == LOW) {
@@ -435,7 +437,7 @@ void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float diviso
       break;
     }
   }
-  //Serial.println(F("Executing FlyingMarlin();"));
+  Serial.println(F("Executing FlyingMarlin();"));
 }
 
 

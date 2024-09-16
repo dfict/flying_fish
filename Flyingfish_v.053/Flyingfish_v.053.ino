@@ -1,5 +1,5 @@
 // Karplus-Strong implemented for solar sounder, with temperature sensor.
-// DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
+// DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration! https://github.com/jlswbs/
 // thanks Lee Tusman and Fame Tothong and Keng for joining the initial crew of beta testers.
 
 #include <EEPROM.h>
@@ -19,9 +19,9 @@ int last = 0;
 int curr = 0;
 uint8_t delaymem[SIZE];
 uint8_t locat = 0;
-uint8_t bound = SIZE; //bound is the period of the delayline. 
-                      //it's important for pitch and timing routines later.
-
+float bound = SIZE; //bound is the period of the delayline. 
+     //it's important for pitch and timing routines later.
+          // usesd to be a byte uint8_t          
 int accum = 0;
 int lowpass = 0.1; // 0 ... 1.0
 bool trig = false;
@@ -88,23 +88,23 @@ float bar4 = beep / (684.4/508.5);
 float bar5 = beep / (755.7/508.5);
 float bar6 = beep / (834.4/508.5);
 float bar7 = beep / (921.2/508.5);
-float bar8 = beep / (1017.1/508.5);
-float bar9 = beep / (2.0/1.0);
-float bar10 = beep / (561.5/254.25);
-float bar11 = beep / (619.9/254.25);
-float bar12 = beep / (684.4/254.25);
-float bar13 = beep / (755.7/254.25);
-float bar14 = beep / (834.4/254.25);
-float bar15 = beep / (921.2/254.25);
-float bar16 = beep / (1017.1/254.25);
-float bar17 = beep / (4.0/1.0);
-float bar18 = beep / (561.5/127.125);
-float bar19 = beep / (619.9/127.125);
-float bar20 = beep / (684.4/127.125);
-float bar21 = beep / (755.7/127.125);
-float bar22 = beep / (834.4/127.125);
-float bar23 = beep / (921.2/127.125);
-float bar24 = beep / (1017.1/127.125);
+float bar8 = beep / (2.0/1.0);
+float bar9 = beep / (561.5/254.25);
+float bar10 = beep / (619.9/254.25);
+float bar11 = beep / (684.4/254.25);
+float bar12 = beep / (755.7/254.25);
+float bar13 = beep / (834.4/254.25);
+float bar14 = beep / (921.2/254.25);
+float bar15 = beep / (4.0/1.0);
+float bar16 = beep / (561.5/127.125);
+float bar17 = beep / (619.9/127.125);
+float bar18 = beep / (684.4/127.125);
+float bar19 = beep / (755.7/127.125);
+float bar20 = beep / (834.4/127.125);
+float bar21 = beep / (921.2/127.125);
+float bar22 = beep / (8.0/1.0);
+float bar23 = beep / (561.5/63.5625);
+float bar24 = beep / (619.9/63.5625);
 
 float ranatTable[24] = {
   bar1, bar2, bar3, bar4, bar5, bar6, bar7, bar8, 
@@ -119,26 +119,24 @@ float punong3 = beep / (458/369.0);
 float punong4 = beep / (493.6/369.0);
 float punong5 = beep / (554.4/369.0);
 float punong6 = beep / (682.0/369.0);
-float punong7 = beep / (740.0/369.0);
-float punong8 = beep / (823.0/369.0);
-float punong9 = beep / (2.0/1.0);
-float punong10 = beep / (411.5/184.5);
-float punong11 = beep / (458/184.5);
-float punong12 = beep / (493.6/184.5);
-float punong13 = beep / (554.4/184.5);
-float punong14 = beep / (682.0/184.5);
-float punong15 = beep / (740.0/184.5);
-float punong16 = beep / (823.0/184.5);
-float punong17 = beep / (4.0/1.0);
-float punong18 = beep / (411.5/92.25);
-float punong19 = beep / (458/92.25);
-float punong20 = beep / (493.6/92.25);
-float punong21 = beep / (554.4/92.25);
-float punong22 = beep / (682.0/92.25);
-float punong23 = beep / (740.0/92.25);
-float punong24 = beep / (823.0/92.25);
-
-//184.5 // 92.25 
+float punong7 = beep / (2.0/1.0);
+float punong8 = beep / (411.5/184.5);
+float punong9 = beep / (458/184.5);
+float punong10 = beep / (493.6/184.5);
+float punong11 = beep / (554.4/184.5);
+float punong12 = beep / (682.0/184.5);
+float punong13 = beep / (4.0/1.0);
+float punong14 = beep / (411.5/92.25);
+float punong15 = beep / (458/92.25);
+float punong16 = beep / (493.6/92.25);
+float punong17 = beep / (554.4/92.25);
+float punong18 = beep / (682.0/92.25);
+float punong19 = beep / (8.0/1.0);
+float punong20 = beep / (411.5/46.125);
+float punong21 = beep / (458/46.125);
+float punong22 = beep / (493.6/46.125);
+float punong23 = beep / (554.4/46.125);
+float punong24 = beep / (682.0/46.125);
 
 float punongTable[24] = {
   punong1, punong2, punong3, punong4, punong5, punong6, punong7, punong8, 
@@ -245,7 +243,7 @@ void stopPlayback()
 
 void setup() {
   startPlayback();
-   Serial.begin(9600);
+   Serial.begin(115200);
   randomSeed(analogRead(4));       //was 0. trying another analog pin. move to the regular void loop?
     pinMode(BUTTON_PIN, INPUT_PULLUP); // Configure the button pin as input with pull-up resistor
     
@@ -332,6 +330,51 @@ int weightedRandom(int* weights, int width) {
 // phrase end is the width of the forloop (rhythm phrasing)
 //divisor is the lowest note of the scale. divide by 2 or 4 to change the octave, etc.
 
+void FlyingCounter() {
+  int noteIndex = 0;
+  
+  // Ensure playback is started
+  startPlayback();
+  
+  while (true) {
+    // Set the boundFloat to the current note frequency
+    bound = punongTable[noteIndex] / 1.0;
+    
+    // Trigger sound generation
+    trig = true;
+    
+    // Print debug information
+    Serial.print(F("Note index: "));
+    Serial.print(noteIndex);
+    Serial.print(F(" Frequency: "));
+    Serial.println(bound, 4);
+    
+    // Allow time for the sound to be heard (e.g., 450ms)
+    for (int i = 0; i < 90; i++) {
+      // Check if the button is pressed to exit the function
+      if (digitalRead(BUTTON_PIN) == LOW) {
+        Serial.println(F("Button pressed. Exiting FlyingCounter();"));
+        return;
+      }
+      delay(5);  // Short delay to allow for button checking
+    }
+    
+    // Stop the current note
+    trig = false;
+    
+    // Increment the note index, wrapping around to 0 when it reaches 24
+    noteIndex = (noteIndex + 1) % 24;
+    
+    // Short silence between notes (e.g., 50ms)
+    delay(50);
+  }
+  
+  // This line will never be reached due to the infinite loop,
+  // but we'll keep it for consistency with the original function
+  Serial.println(F("Finished executing FlyingCounter();"));
+}
+
+
 void FlyingFlounder(int* weights, float* noteTable, int phraseBegin, int phraseEnd, float divisor) //need to add value for the start value
 {
   int j = 1;
@@ -383,6 +426,7 @@ void FlyingFlounder(int* weights, float* noteTable, int phraseBegin, int phraseE
   Serial.println(F("Executing FlyingFlounder();")); 
 }
 
+
 void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float divisor, float mult, float add) 
 {
   int j = 1;
@@ -396,22 +440,47 @@ void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float diviso
 
     updateSensorReadings();
     LED_PORT ^= 1 << LED_BIT;
+    
+    // Debug: Print loop counter and sensor readings
+    Serial.print(F("i: "));
+    Serial.print(i);
+    Serial.print(F(" floatPot: "));
+    Serial.print(floatPot, 4);
+    Serial.print(F(" "));
+
+    // Perlin noise calculation
+    float noiseInput = (i * (mult + 0.0)) + floatPot;
+    float rawNoise = perlinNoise(noiseInput);
+    float noiseValue = (rawNoise + 1.0) / 2.0;
+    noiseValue = constrain(noiseValue, 0.0, 0.9999);
+
+    // Debug: Print noise values
+    Serial.print(F("noiseInput: "));
+    Serial.print(noiseInput, 4);
+    Serial.print(F(" rawNoise: "));
+    Serial.print(rawNoise, 4);
+    Serial.print(F(" noiseValue: "));
+    Serial.print(noiseValue, 4);
+    Serial.print(F(" "));
+
+    int tab = (int)(noiseValue * 23.0);
+    tab = constrain(tab, 0, 23);
+    float selectedFreq = noteTable[tab];
+    bound = selectedFreq / divisor;
+
+    // Debug: Print note selection details
+    Serial.print(F("tab: "));
+    Serial.print(tab);
+    Serial.print(F(" selectedFreq: "));
+    Serial.print(selectedFreq, 4);
+    Serial.print(F(" bound: "));
+    Serial.print(bound, 4);
+    Serial.println();
+
+    // Trigger sound generation
     trig = true;
-  
-    // Use i * mult + add for the Perlin noise calculation
-    float noiseValue = (perlinNoise((i * (mult + 0.0) ) + floatPot) + 1.0) / 2.0;
-// i * (mult + floatPot) + add?
- //or  i * (mult ) + floatPot?
-          // float noiseValue = (perlinNoise(i * 0.4) + 1.0) / 2.0; 
-          // i / 20.0 still works but changes are so gradual...2.5 is good
-          // i * 3.4 is ok... i * 2.0 also ok
-          // add is usually just 1. maybe get rid of + add + 1?
-    noiseValue = constrain(noiseValue, 0.0, 1.0);
-    int tab = (int)(noiseValue * 23.0);  // Scale noise to select note from noteTable
-    tab = constrain(tab, 0, 23);  // Ensure tab is within bounds...might not be needed
-    bound = noteTable[tab];
-    bound = bound / divisor;
-    //bound = constrain(bound, 24, 255); 
+   
+    // Original random lowpass filter calculation
     int value = random(0, 1023);
     float falue = map(value, 0, 1023, 1, 3000) / 1000.0;
     lowpass = falue;
@@ -420,17 +489,6 @@ void FlyingMarlin(float* noteTable, int phraseBegin, int phraseEnd, float diviso
     bond = bond + vari;
     bond = bond / 5;
     delay(bond);
-
-    for(int q = 0; q < 3; q++) {
-      val[q] = analogRead(q);
-      Serial.print(val[q]);
-      Serial.print(F(" "));
-    }
-    Serial.print(noteTable[tab]);
-    Serial.print(F(" "));
-    Serial.print(tab);
-    Serial.print(F(" "));
-    Serial.println(floatPot);
 
     if (digitalRead(BUTTON_PIN) == LOW) {
       Serial.println(F("Button pressed. Exiting Program();"));
@@ -456,6 +514,7 @@ void loop() {
   switch (mode) {
  case 1:
        FlyingMarlin(noteTable, 0, 30, 1, 5.1, 1.1);
+     //     FlyingCounter();
       break;
     case 2:
       FlyingMarlin(noteTable, 0, 30, 4, 2.1, 1.9);
